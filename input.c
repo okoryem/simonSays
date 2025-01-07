@@ -101,7 +101,7 @@ int checkTilt(int nextMove) {
 	int cnt = 0;
 
 	getPosition(&initialData);
-	printf("tilt: %d\n", initialData.x);
+	// printf("tilt: %d\n", initialData.x);
 	initialX = initialData.x;
 	initialY = initialData.y;
 	initialZ = initialData.z;
