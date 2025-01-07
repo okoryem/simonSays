@@ -5,13 +5,7 @@ int js;
 int tilt;
 unsigned char reg = 0x28;
 unsigned char data[6];
-/*
-typedef struct {
-	int16_t x;
-	int16_t y;
-	int16_t z;
-} coord_t;
-*/
+
 coord_t initialData = {0, 0, 0};
 int16_t initialX, initialY, initialZ;
 
@@ -118,7 +112,7 @@ int checkTilt(int nextMove) {
 		getPosition(&initialData);
 		int16_t xDifference = initialData.x - initialX;
 		int16_t yDifference = initialData.y - initialY;
-		printf("X: %d | Y: %d\n", xDifference, yDifference);
+		// printf("X: %d | Y: %d\n", xDifference, yDifference);
 		if (nextMove == 2 && xDifference >= THRESHOLD) {
 			return 1;
 		} else if (nextMove == 2 && checkingVar != -1) {
@@ -171,7 +165,7 @@ int checkChoice(int nextMove) {
 		getPosition(&initialData);
 		int16_t xDifference = initialData.x - initialX;
 		int16_t yDifference = initialData.y - initialY;
-		printf("X: %d | Y: %d\n", xDifference, yDifference);
+		// printf("X: %d | Y: %d\n", xDifference, yDifference);
 		checkJoyInput();
 
 		if (checkingVar == nextMove) {
