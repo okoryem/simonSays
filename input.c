@@ -107,7 +107,8 @@ int checkTilt(int nextMove) {
 	initialZ = initialData.z;
 
 	//////////
-	while (tilt >= 0 && cnt < 10000) {
+	while (tilt >= 0 && cnt < 2500) {
+		printf("%d\n", cnt);
 		checkJoyInput();
 		getPosition(&initialData);
 		int16_t xDifference = initialData.x - initialX;
@@ -161,7 +162,8 @@ int checkChoice(int nextMove) {
 
 	int cnt = 0;
 
-	while (cnt < 10000) {
+	while (cnt < 2500) {
+		printf("%d\n", cnt);
 		getPosition(&initialData);
 		int16_t xDifference = initialData.x - initialX;
 		int16_t yDifference = initialData.y - initialY;
