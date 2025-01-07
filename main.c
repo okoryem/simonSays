@@ -4,6 +4,7 @@ int main(void) {
 	int gamePlayLoop = 1;
 	int num;
 	openDisplay();
+	clearDisplay();
 	openInput();
 	openTilt();
 

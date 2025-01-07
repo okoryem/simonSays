@@ -1,4 +1,5 @@
 #include "project.h"
+#define THRESHOLD 10000
 
 int js;
 int tilt;
@@ -17,7 +18,7 @@ int16_t initialX, initialY, initialZ;
 int checkingVar = -1;
 
 void openInput(void) {
-	js = open("/dev/input/event4", O_RDONLY);
+	js = open("/dev/input/event4", O_RDONLY | O_NONBLOCK);
 	if (js < 0) {
 		perror("Error opening joystick device");
 	}
@@ -56,27 +57,32 @@ void closeTilt(void) {
 
 void checkJoyInput(void) {
 	struct input_event ev;
-
-	if (read(js, &ev, sizeof(struct input_event)) > 0 && ev.type == EV_KEY && ev.value == 1) {
-		switch (ev.code) {
-			case KEY_RIGHT:
-				// this is for down
-				checkingVar = 7;
-				break;
-			case KEY_LEFT:
-				// this if for up
-				checkingVar = 6;
-				break;
-			case KEY_UP:
-				// this is for right
-				checkingVar = 4;
-				break;
-			case KEY_DOWN:
-				// this is for left
-				checkingVar = 5;
-				break;
-			case KEY_ENTER:
-				checkingVar = 8;
+	if (read(js, &ev, sizeof(struct input_event)) > 0) {
+		if (ev.type == EV_KEY && ev.value == 1) {
+			switch (ev.code) {
+				case KEY_RIGHT:
+					// this is for down
+					checkingVar = 7;
+					break;
+				case KEY_LEFT:
+					// this if for up
+					checkingVar = 6;
+					break;
+				case KEY_UP:
+					// this is for right
+					checkingVar = 4;
+					break;
+				case KEY_DOWN:
+					// this is for left
+					checkingVar = 5;
+					break;
+				case KEY_ENTER:
+					checkingVar = 8;
+					break;
+				default:
+					checkingVar = -1;
+					break;
+			}
 		}
 	}
 }
@@ -101,6 +107,7 @@ int checkTilt(int nextMove) {
 	int cnt = 0;
 
 	getPosition(&initialData);
+	printf("tilt: %d\n", initialData.x);
 	initialX = initialData.x;
 	initialY = initialData.y;
 	initialZ = initialData.z;
@@ -111,39 +118,39 @@ int checkTilt(int nextMove) {
 		getPosition(&initialData);
 		int16_t xDifference = initialData.x - initialX;
 		int16_t yDifference = initialData.y - initialY;
-
-		if (nextMove == 0 && xDifference >= 7000) {
-			return 1;
-		} else if (nextMove == 0 && checkingVar != -1) {
-			return 0;
-		} else if ((xDifference <= -7000 || yDifference >= 7000 || yDifference <= -7000) && nextMove == 0) {
-			return 0;
-		}
-
-
-		if (nextMove == 1 && xDifference <= -7000) {
-			return 1;
-		} else if (nextMove == 1 && checkingVar != -1) {
-			return 0;
-		} else if ((xDifference >= 7000 || yDifference >= 7000 || yDifference <= -7000) && nextMove == 1) {
-			return 0;
-		}
-
-
-		if (nextMove == 2 && yDifference >= 7000) {
+		printf("X: %d | Y: %d\n", xDifference, yDifference);
+		if (nextMove == 2 && xDifference >= THRESHOLD) {
 			return 1;
 		} else if (nextMove == 2 && checkingVar != -1) {
 			return 0;
-		} else if ((xDifference <= -7000 || xDifference >= 7000 || yDifference <= -7000) && nextMove == 2) {
+		} else if ((xDifference <= -THRESHOLD || yDifference >= THRESHOLD || yDifference <= -THRESHOLD) && nextMove == 2) {
 			return 0;
 		}
 
 
-		if (nextMove == 3 && yDifference <= -7000) {
+		if (nextMove == 3 && xDifference <= -THRESHOLD) {
 			return 1;
 		} else if (nextMove == 3 && checkingVar != -1) {
 			return 0;
-		} else if ((xDifference <= -7000 || yDifference >= 7000 || xDifference >= 7000) && nextMove == 3) {
+		} else if ((xDifference >= THRESHOLD || yDifference >= THRESHOLD || yDifference <= -THRESHOLD) && nextMove == 3) {
+			return 0;
+		}
+
+
+		if (nextMove == 0 && yDifference >= THRESHOLD) {
+			return 1;
+		} else if (nextMove == 0 && checkingVar != -1) {
+			return 0;
+		} else if ((xDifference <= -THRESHOLD || xDifference >= THRESHOLD || yDifference <= -THRESHOLD) && nextMove == 0) {
+			return 0;
+		}
+
+
+		if (nextMove == 1 && yDifference <= -THRESHOLD) {
+			return 1;
+		} else if (nextMove == 1 && checkingVar != -1) {
+			return 0;
+		} else if ((xDifference <= -THRESHOLD || yDifference >= THRESHOLD || xDifference >= THRESHOLD) && nextMove == 1) {
 			return 0;
 		}
 		cnt++;
@@ -164,7 +171,7 @@ int checkChoice(int nextMove) {
 		getPosition(&initialData);
 		int16_t xDifference = initialData.x - initialX;
 		int16_t yDifference = initialData.y - initialY;
-
+		printf("X: %d | Y: %d\n", xDifference, yDifference);
 		checkJoyInput();
 
 		if (checkingVar == nextMove) {
@@ -172,7 +179,7 @@ int checkChoice(int nextMove) {
 			return 1;
 		}
 
-		if (xDifference >= 40 || xDifference <= -40 || yDifference >= 40 || yDifference <= -40) {
+		if (xDifference >= THRESHOLD || xDifference <= -THRESHOLD || yDifference >= THRESHOLD || yDifference <= -THRESHOLD) {
 			return 0;
 		}
 

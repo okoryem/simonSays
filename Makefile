@@ -11,7 +11,7 @@ TARGET = simonSays
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ) -lsense
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ)
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
