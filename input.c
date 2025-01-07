@@ -4,20 +4,20 @@ int js;
 int tilt;
 unsigned char reg = 0x28;
 unsigned char data[6];
-
+/*
 typedef struct {
 	int16_t x;
 	int16_t y;
 	int16_t z;
 } coord_t;
-
-coords_t initialData = {0, 0, 0};
+*/
+coord_t initialData = {0, 0, 0};
 int16_t initialX, initialY, initialZ;
 
 int checkingVar = -1;
 
 void openInput(void) {
-	js = open("/dev/input/event4", 0_RDONLY);
+	js = open("/dev/input/event4", O_RDONLY);
 	if (js < 0) {
 		perror("Error opening joystick device");
 	}
@@ -30,7 +30,7 @@ void closeInput(void) {
 	}
 }
 
-void openTilt(&) {
+void openTilt() {
 	tilt = open("/dev/i2c-1", O_RDWR);
 	if (tilt < 0) {
 		perror("Failed to poen I2C device");
@@ -81,7 +81,7 @@ void checkJoyInput(void) {
 	}
 }
 
-void getPosition(coord_t coords) {
+void getPosition(coord_t *coords) {
 	if (write(tilt, &reg, 1) != 1) {
 		perror("Failed to write to I2C device");
 		return;
@@ -147,6 +147,8 @@ int checkTilt(int nextMove) {
 			return 0;
 		}
 		cnt++;
+	}
+	return 0;
 }
 
 int checkChoice(int nextMove) {

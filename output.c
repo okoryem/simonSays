@@ -12,13 +12,13 @@
 
 struct fb_t {
 	uint16_t pixel[HEIGHT][WIDTH];
-}
+};
 
 int fb;
 struct fb_t *bm;
 
 void openDisplay(void) {
-	fb = open("/dev/fb0", 0_RDWR);
+	fb = open("/dev/fb0", O_RDWR);
 
 	if (fb < 0) {
 		perror("Error opening framebuffer");
@@ -223,4 +223,5 @@ int checkCorrect(int isCorrect) {
 		clearDisplay();
 		return 0;
 	}
+	return 0;
 }
